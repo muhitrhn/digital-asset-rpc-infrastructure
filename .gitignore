@@ -30,3 +30,6 @@ test-programs
 /tests/*/target
 /*/target
 /target
+
+# Unnecessary files
+.DS_Store*

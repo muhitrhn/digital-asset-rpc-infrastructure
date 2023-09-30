@@ -1,7 +1,7 @@
 use crate::{error::IngesterError, metric, tasks::TaskData};
 use blockbuster::programs::token_account::TokenProgramAccount;
 use cadence_macros::{is_global_default_set, statsd_count};
-use digital_asset_types::dao::{asset, token_accounts, tokens};
+use digital_asset_types::dao::{asset, token_accounts, tokens, stake_accounts};
 use plerkle_serialization::AccountInfo;
 use sea_orm::{
     entity::*, query::*, sea_query::OnConflict, ActiveValue::Set, ConnectionTrait,
@@ -31,7 +31,19 @@ pub async fn handle_token_program_account<'a, 'b, 'c>(
                 AccountState::Frozen => true,
                 _ => false,
             };
-            let owner = ta.owner.to_bytes().to_vec();
+            let mut owner = ta.owner.to_bytes().to_vec();
+
+            if !ta.owner.is_on_curve() {
+                let stake_account: Option<stake_accounts::Model> = stake_accounts::Entity::find_by_id(mint.clone())
+                    .filter(stake_accounts::Column::Pubkey.eq(owner.clone()))
+                    .one(db)
+                    .await?;
+
+                if stake_account.is_some() {
+                    owner = unsafe { stake_account.unwrap_unchecked().authority };
+                }
+            }
+
             let model = token_accounts::ActiveModel {
                 pubkey: Set(key_bytes),
                 mint: Set(mint.clone()),

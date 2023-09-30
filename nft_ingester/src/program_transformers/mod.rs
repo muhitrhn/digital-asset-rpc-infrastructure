@@ -4,7 +4,7 @@ use blockbuster::{
     program_handler::ProgramParser,
     programs::{
         bubblegum::BubblegumParser, token_account::TokenAccountParser,
-        token_metadata::TokenMetadataParser, ProgramParseResult,
+        token_metadata::TokenMetadataParser, ProgramParseResult, stake_account::StakeAccountParser,
     },
 };
 use log::{debug, error, info};
@@ -16,11 +16,14 @@ use std::collections::{HashMap, HashSet, VecDeque};
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::program_transformers::{
-    bubblegum::handle_bubblegum_instruction, token::handle_token_program_account,
+    bubblegum::handle_bubblegum_instruction,
+    stake::handle_stake_program_account,
+    token::handle_token_program_account,
     token_metadata::handle_token_metadata_account,
 };
 
 mod bubblegum;
+mod stake;
 mod token;
 mod token_metadata;
 
@@ -37,9 +40,11 @@ impl ProgramTransformer {
         let bgum = BubblegumParser {};
         let token_metadata = TokenMetadataParser {};
         let token = TokenAccountParser {};
+        let stake = StakeAccountParser {};
         matchers.insert(bgum.key(), Box::new(bgum));
         matchers.insert(token_metadata.key(), Box::new(token_metadata));
         matchers.insert(token.key(), Box::new(token));
+        matchers.insert(stake.key(), Box::new(stake));
         let hs = matchers.iter().fold(HashSet::new(), |mut acc, (k, _)| {
             acc.insert(*k);
             acc
@@ -169,6 +174,15 @@ impl ProgramTransformer {
                 }
                 ProgramParseResult::TokenProgramAccount(parsing_result) => {
                     handle_token_program_account(
+                        &acct,
+                        parsing_result,
+                        &self.storage,
+                        &self.task_sender,
+                    )
+                    .await
+                }
+                ProgramParseResult::StakeProgramAccount(parsing_result) => {
+                    handle_stake_program_account(
                         &acct,
                         parsing_result,
                         &self.storage,
