@@ -8,7 +8,7 @@ use digital_asset_types::{
     },
     dapi::{
         get_asset, get_assets_by_authority, get_assets_by_creator, get_assets_by_group,
-        get_assets_by_owner, get_proof_for_asset, search_assets,
+        get_assets_by_owner, get_owners_by_asset, get_proof_for_asset, search_assets,
     },
     rpc::{filter::SearchConditionType, response::GetGroupingResponse},
     rpc::{OwnershipModel, RoyaltyModel},
@@ -150,6 +150,37 @@ impl ApiContract for DasApi {
         get_assets_by_owner(
             &self.db_connection,
             owner_address_bytes,
+            sort_by,
+            limit.map(|x| x as u64).unwrap_or(5000),
+            page.map(|x| x as u64),
+            before.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
+            after.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
+        )
+        .await
+        .map_err(Into::into)
+    }
+
+    async fn get_owners_by_asset(
+        self: &DasApi,
+        payload: GetOwnersByAsset,
+    ) -> Result<AssetList, DasApiError> {
+        let GetOwnersByAsset {
+            asset_id,
+            sort_by,
+            limit,
+            page,
+            before,
+            after,
+        } = payload;
+        let before: Option<String> = before.filter(|before| !before.is_empty());
+        let after: Option<String> = after.filter(|after| !after.is_empty());
+        let asset_id = validate_pubkey(asset_id.clone())?;
+        let asset_id_bytes = asset_id.to_bytes().to_vec();
+        let sort_by = sort_by.unwrap_or_default();
+        self.validate_pagination(&limit, &page, &before, &after)?;
+        get_owners_by_asset(
+            &self.db_connection,
+            asset_id_bytes,
             sort_by,
             limit.map(|x| x as u64).unwrap_or(5000),
             page.map(|x| x as u64),

@@ -176,6 +176,20 @@ curl --request POST --url http://localhost:9090 --header 'Content-Type: applicat
 
 curl --request POST --url http://localhost:9090 --header 'Content-Type: application/json' --data '{
     "jsonrpc": "2.0",
+    "method": "getOwnersByAsset",
+    "params": [
+      "CMvMqPNKHikuGi7mrngvQzFeQ4rndDnopx3kc9drne8M",
+      { "sortBy": "created", "sortDirection": "asc"},
+      50,
+      1,
+      "",
+      ""
+    ],
+    "id": 0
+}' | json_pp
+
+curl --request POST --url http://localhost:9090 --header 'Content-Type: application/json' --data '{
+    "jsonrpc": "2.0",
     "method": "getAsset",
     "params": [
       "8vw7tdLGE3FBjaetsJrZAarwsbc8UESsegiLyvWXxs5A"

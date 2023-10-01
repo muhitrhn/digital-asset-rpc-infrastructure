@@ -137,6 +137,29 @@ pub async fn get_assets_by_owner(
     .await
 }
 
+pub async fn get_owners_by_asset(
+    conn: &impl ConnectionTrait,
+    asset_id: Vec<u8>,
+    sort_by: Option<asset::Column>,
+    sort_direction: Order,
+    pagination: &Pagination,
+    limit: u64,
+) -> Result<Vec<FullAsset>, DbErr> {
+    let cond = Condition::all()
+        .add(asset::Column::Id.eq(asset_id))
+        .add(asset::Column::Supply.gt(0));
+    get_assets_by_condition(
+        conn,
+        cond,
+        vec![],
+        sort_by,
+        sort_direction,
+        pagination,
+        limit,
+    )
+    .await
+}
+
 pub async fn get_by_authority(
     conn: &impl ConnectionTrait,
     authority: Vec<u8>,
