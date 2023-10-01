@@ -40,7 +40,7 @@ pub async fn handle_token_program_account<'a, 'b, 'c>(
                     .await?;
 
                 if stake_account.is_some() {
-                    owner = unsafe { stake_account.unwrap_unchecked().authority };
+                    owner = stake_account.unwrap().authority;
                 }
             }
 
