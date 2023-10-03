@@ -169,7 +169,7 @@ create table stake_accounts
 -- @@@@@@
 create index sa_token on stake_accounts (token);
 -- @@@@@@
-create index ta_slot_updated_idx on stake_accounts USING BTREE (slot_updated);
+create index sa_slot_updated_idx on stake_accounts USING BTREE (slot_updated);
 -- @@@@@@
 
 create table asset_data
