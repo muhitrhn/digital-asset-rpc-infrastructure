@@ -11,6 +11,7 @@ mod m20221115_165700_add_backfiller_locked;
 mod m20221116_110500_add_backfiller_failed_and_locked_indeces;
 mod m20230105_160722_drop_collection_info;
 mod m20230106_051135_unique_groupings;
+mod m20230131_140613_change_stake_account_indexes;
 mod m20230131_140613_change_token_account_indexes;
 mod m20230203_205959_improve_upsert_perf;
 mod m20230224_093722_performance_improvements;
@@ -50,8 +51,9 @@ impl MigratorTrait for Migrator {
             Box::new(m20230105_160722_drop_collection_info::Migration),
             Box::new(m20230106_051135_unique_groupings::Migration),
             Box::new(m20230131_140613_change_token_account_indexes::Migration),
+            Box::new(m20230131_140613_change_stake_account_indexes::Migration),
             Box::new(m20230203_205959_improve_upsert_perf::Migration),
-            Box::new(m20230224_093722_performance_improvements::Migration),
+            // Box::new(m20230224_093722_performance_improvements::Migration),
             Box::new(m20230310_162227_add_indexes_to_bg::Migration),
             Box::new(m20230317_121944_remove_indexes_for_perf::Migration),
             Box::new(m20230510_183736_add_indices_to_assets::Migration),

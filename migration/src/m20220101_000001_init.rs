@@ -27,12 +27,13 @@ impl MigrationTrait for Migration {
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let sql = r#"
             DROP TABLE IF EXISTS `asset`;
-            DROP TABLE IF EXISTS `asset_data`;cd
+            DROP TABLE IF EXISTS `asset_data`;
             DROP TABLE IF EXISTS `asset_authority`;
             DROP TABLE IF EXISTS `asset_v1_account_attachments`;
             DROP TABLE IF EXISTS `asset_grouping`;
             DROP TABLE IF EXISTS `asset_creators`;
             DROP TABLE IF EXISTS `tokens`;
+            DROP TABLE IF EXISTS `stake_accounts`;
             DROP TABLE IF EXISTS `token_accounts`;
         "#;
         let stmt = Statement::from_string(manager.get_database_backend(), sql.to_owned());

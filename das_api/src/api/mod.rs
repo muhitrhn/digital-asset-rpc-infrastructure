@@ -36,6 +36,17 @@ pub struct GetAssetsByOwner {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
+pub struct GetMultipleByAsset {
+    pub id: String,
+    pub sort_by: Option<AssetSorting>,
+    pub limit: Option<u32>,
+    pub page: Option<u32>,
+    pub before: Option<String>,
+    pub after: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub struct GetAsset {
     pub id: String,
     #[serde(default)]
@@ -148,6 +159,15 @@ pub trait ApiContract: Send + Sync + 'static {
     async fn get_assets_by_owner(
         &self,
         payload: GetAssetsByOwner,
+    ) -> Result<AssetList, DasApiError>;
+    #[rpc(
+        name = "getMultipleByAsset",
+        params = "named",
+        summary = "Get a list of same asset owned by different addresses"
+    )]
+    async fn get_multiple_by_asset(
+        &self,
+        payload: GetMultipleByAsset,
     ) -> Result<AssetList, DasApiError>;
     #[rpc(
         name = "getAssetsByGroup",

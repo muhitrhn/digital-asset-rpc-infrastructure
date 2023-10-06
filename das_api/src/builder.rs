@@ -41,6 +41,18 @@ impl RpcApiBuilder {
         module.register_alias("getAssetsByOwner", "get_assets_by_owner")?;
 
         module.register_async_method(
+            "get_multiple_by_asset",
+            |rpc_params, rpc_context| async move {
+                let payload = rpc_params.parse::<GetMultipleByAsset>()?;
+                rpc_context
+                    .get_multiple_by_asset(payload)
+                    .await
+                    .map_err(Into::into)
+            },
+        )?;
+        module.register_alias("getMultipleByAsset", "get_multiple_by_asset")?;
+
+        module.register_async_method(
             "get_assets_by_creator",
             |rpc_params, rpc_context| async move {
                 let payload = rpc_params.parse::<GetAssetsByCreator>()?;
