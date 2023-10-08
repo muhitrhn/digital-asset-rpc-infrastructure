@@ -1,7 +1,9 @@
 mod full_asset;
 mod generated;
+mod full_owner;
 pub mod scopes;
 pub use full_asset::*;
+pub use full_owner::*;
 #[allow(ambiguous_glob_reexports)]
 pub use generated::*;
 

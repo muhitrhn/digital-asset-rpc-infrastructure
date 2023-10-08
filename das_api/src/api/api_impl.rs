@@ -8,7 +8,7 @@ use digital_asset_types::{
     },
     dapi::{
         get_asset, get_assets_by_authority, get_assets_by_creator, get_assets_by_group,
-        get_assets_by_owner, get_multiple_by_asset, get_proof_for_asset, get_signatures_for_asset, search_assets,
+        get_assets_by_owner, get_owners_by_asset, get_proof_for_asset, get_signatures_for_asset, search_assets,
     },
     rpc::{
         filter::{AssetSortBy, SearchConditionType},
@@ -32,7 +32,7 @@ use {
     crate::DasApiError,
     async_trait::async_trait,
     digital_asset_types::rpc::{
-        response::AssetList, response::TransactionSignatureList, Asset, AssetProof,
+        response::{AssetList, OwnerList}, response::TransactionSignatureList, Asset, AssetProof,
     },
     sea_orm::{DatabaseConnection, DbErr, SqlxPostgresConnector},
     sqlx::postgres::PgPoolOptions,
@@ -220,11 +220,11 @@ impl ApiContract for DasApi {
         .map_err(Into::into)
     }
 
-    async fn get_multiple_by_asset(
+    async fn get_owners_by_asset(
         self: &DasApi,
-        payload: GetMultipleByAsset,
-    ) -> Result<AssetList, DasApiError> {
-        let GetMultipleByAsset {
+        payload: GetOwnersByAsset,
+    ) -> Result<OwnerList, DasApiError> {
+        let GetOwnersByAsset {
             id,
             sort_by,
             limit,
@@ -238,10 +238,7 @@ impl ApiContract for DasApi {
         let asset_id_bytes = asset_id.to_bytes().to_vec();
         let sort_by = sort_by.unwrap_or_default();
         self.validate_pagination(&limit, &page, &before, &after)?;
-        let transform = AssetTransform {
-            cdn_prefix: self.cdn_prefix.clone(),
-        };
-        get_multiple_by_asset(
+        get_owners_by_asset(
             &self.db_connection,
             asset_id_bytes,
             sort_by,
@@ -249,7 +246,6 @@ impl ApiContract for DasApi {
             page.map(|x| x as u64),
             before.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
             after.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
-            &transform,
             self.feature_flags.enable_grand_total_query,
         )
         .await

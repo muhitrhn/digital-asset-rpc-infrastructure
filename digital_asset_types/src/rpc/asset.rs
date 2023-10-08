@@ -307,6 +307,16 @@ pub struct Ownership {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct TokenOwnership {
+    pub mint: String,
+    pub frozen: bool,
+    pub delegated: bool,
+    pub delegate: Option<String>,
+    pub owner: String,
+    pub amount: u64,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub enum UseMethod {
     Burn,
     Multiple,

@@ -45,6 +45,48 @@ impl Default for AssetSortDirection {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "camelCase")]
+
+pub struct OwnerSorting {
+    pub sort_by: OwnerSortBy,
+    pub sort_direction: Option<OwnerSortDirection>,
+}
+
+impl Default for OwnerSorting {
+    fn default() -> OwnerSorting {
+        OwnerSorting {
+            sort_by: OwnerSortBy::Updated,
+            sort_direction: Some(OwnerSortDirection::default()),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, JsonSchema)]
+
+pub enum OwnerSortBy {
+    #[serde(rename = "updated")]
+    Updated,
+    #[serde(rename = "recent_action")]
+    RecentAction,
+    #[serde(rename = "none")]
+    None,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, JsonSchema)]
+pub enum OwnerSortDirection {
+    #[serde(rename = "asc")]
+    Asc,
+    #[serde(rename = "desc")]
+    Desc,
+}
+
+impl Default for OwnerSortDirection {
+    fn default() -> OwnerSortDirection {
+        OwnerSortDirection::Desc
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq, JsonSchema)]
 pub enum SearchConditionType {
     #[serde(rename = "all")]

@@ -1,7 +1,7 @@
 use crate::DasApiError;
 use async_trait::async_trait;
-use digital_asset_types::rpc::filter::SearchConditionType;
-use digital_asset_types::rpc::response::{AssetList, TransactionSignatureList};
+use digital_asset_types::rpc::filter::{SearchConditionType, OwnerSorting};
+use digital_asset_types::rpc::response::{AssetList, TransactionSignatureList, OwnerList};
 use digital_asset_types::rpc::{filter::AssetSorting, response::GetGroupingResponse};
 use digital_asset_types::rpc::{Asset, AssetProof, Interface, OwnershipModel, RoyaltyModel};
 use open_rpc_derive::{document_rpc, rpc};
@@ -36,9 +36,9 @@ pub struct GetAssetsByOwner {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
-pub struct GetMultipleByAsset {
+pub struct GetOwnersByAsset {
     pub id: String,
-    pub sort_by: Option<AssetSorting>,
+    pub sort_by: Option<OwnerSorting>,
     pub limit: Option<u32>,
     pub page: Option<u32>,
     pub before: Option<String>,
@@ -161,14 +161,14 @@ pub trait ApiContract: Send + Sync + 'static {
         payload: GetAssetsByOwner,
     ) -> Result<AssetList, DasApiError>;
     #[rpc(
-        name = "getMultipleByAsset",
+        name = "getOwnersByAsset",
         params = "named",
         summary = "Get a list of same asset owned by different addresses"
     )]
-    async fn get_multiple_by_asset(
+    async fn get_owners_by_asset(
         &self,
-        payload: GetMultipleByAsset,
-    ) -> Result<AssetList, DasApiError>;
+        payload: GetOwnersByAsset,
+    ) -> Result<OwnerList, DasApiError>;
     #[rpc(
         name = "getAssetsByGroup",
         params = "named",
