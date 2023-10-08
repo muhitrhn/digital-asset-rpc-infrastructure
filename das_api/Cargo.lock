@@ -500,7 +500,7 @@ dependencies = [
 [[package]]
 name = "blockbuster"
 version = "0.7.3"
-source = "git+https://github.com/muhitrhn/blockbuster.git?rev=ef3d9673#ef3d9673250aca67bc0767303e617c880e98ef3d"
+source = "git+https://github.com/muhitrhn/blockbuster.git?rev=1d43d57c#1d43d57c0d34dc95e128146de06d09e4310c16c1"
 dependencies = [
  "anchor-lang",
  "async-trait",
@@ -1017,7 +1017,7 @@ version = "0.7.2"
 dependencies = [
  "anchor-lang",
  "async-trait",
- "blockbuster 0.7.3 (git+https://github.com/muhitrhn/blockbuster.git?rev=ef3d9673)",
+ "blockbuster 0.7.3 (git+https://github.com/muhitrhn/blockbuster.git?rev=1d43d57c)",
  "bs58 0.4.0",
  "cadence",
  "cadence-macros",

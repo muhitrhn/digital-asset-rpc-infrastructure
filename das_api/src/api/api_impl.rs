@@ -72,7 +72,7 @@ impl DasApi {
 
         if let Some(limit) = limit {
             // make config item
-            if *limit > 1000 {
+            if *limit > 5000 {
                 return Err(DasApiError::PaginationError);
             }
         }
@@ -209,7 +209,7 @@ impl ApiContract for DasApi {
             &self.db_connection,
             owner_address_bytes,
             sort_by,
-            limit.map(|x| x as u64).unwrap_or(1000),
+            limit.map(|x| x as u64).unwrap_or(5000),
             page.map(|x| x as u64),
             before.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
             after.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
@@ -282,7 +282,7 @@ impl ApiContract for DasApi {
             group_key,
             group_value,
             sort_by,
-            limit.map(|x| x as u64).unwrap_or(1000),
+            limit.map(|x| x as u64).unwrap_or(5000),
             page.map(|x| x as u64),
             before.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
             after.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
@@ -320,7 +320,7 @@ impl ApiContract for DasApi {
             creator_address_bytes,
             only_verified,
             sort_by,
-            limit.map(|x| x as u64).unwrap_or(1000),
+            limit.map(|x| x as u64).unwrap_or(5000),
             page.map(|x| x as u64),
             before.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
             after.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
@@ -354,7 +354,7 @@ impl ApiContract for DasApi {
             &self.db_connection,
             authority_address_bytes,
             sort_by,
-            limit.map(|x| x as u64).unwrap_or(1000),
+            limit.map(|x| x as u64).unwrap_or(5000),
             page.map(|x| x as u64),
             before.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
             after.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
@@ -454,7 +454,7 @@ impl ApiContract for DasApi {
             &self.db_connection,
             saq,
             sort_by,
-            limit.map(|x| x as u64).unwrap_or(1000),
+            limit.map(|x| x as u64).unwrap_or(5000),
             page.map(|x| x as u64),
             before.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
             after.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
@@ -514,7 +514,7 @@ impl ApiContract for DasApi {
             id,
             tree,
             leaf_index,
-            limit.map(|x| x as u64).unwrap_or(1000),
+            limit.map(|x| x as u64).unwrap_or(5000),
             page.map(|x| x as u64),
             before.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),
             after.map(|x| bs58::decode(x).into_vec().unwrap_or_default()),

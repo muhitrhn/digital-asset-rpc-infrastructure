@@ -3,8 +3,8 @@ use blockbuster::programs::stake_account::{StakeProgramAccount};
 use digital_asset_types::dao::{asset, stake_accounts};
 use plerkle_serialization::{AccountInfo};
 use sea_orm::{
-    entity::*, query::*, sea_query::OnConflict, ActiveValue::Set, ConnectionTrait,
-    DatabaseConnection, DbBackend, EntityTrait,
+    query::*, sea_query::OnConflict, ActiveValue::Set, ConnectionTrait,
+    DatabaseConnection, DbBackend, EntityTrait, ColumnTrait, ActiveModelTrait,
 };
 use tokio::sync::mpsc::UnboundedSender;
 
@@ -20,12 +20,12 @@ pub async fn handle_stake_program_account<'a, 'b, 'c>(
 
     match &parsing_result {
         StakeProgramAccount::SacStakeAccount(sa) => {
-            let mint = sa.token.to_bytes().to_vec();
-            let owner = sa.authority.to_bytes().to_vec();
+            let authority = sa.authority.to_bytes().to_vec();
+            let token = sa.token.to_bytes().to_vec();
             let model = stake_accounts::ActiveModel {
                 pubkey: Set(key_bytes),
-                authority: Set(owner.clone()),
-                token: Set(mint.clone()),
+                authority: Set(authority.clone()),
+                token: Set(token.clone()),
                 custom_program: Set(custom_program),
                 slot_updated: Set(account_update.slot() as i64)
             };
@@ -48,13 +48,13 @@ pub async fn handle_stake_program_account<'a, 'b, 'c>(
             );
             db.execute(query).await?;
             let txn = db.begin().await?;
-            let asset_update: Option<asset::Model> = asset::Entity::find_by_id(mint)
+            let asset_update: Option<asset::Model> = asset::Entity::find_by_id(token)
                 .filter(asset::Column::OwnerType.eq("single"))
                 .one(&txn)
                 .await?;
             if let Some(asset) = asset_update {
                     let mut active: asset::ActiveModel = asset.into();
-                active.owner = Set(Some(owner));
+                active.owner = Set(Some(authority));
                         active.save(&txn).await?;
                     }
             txn.commit().await?;

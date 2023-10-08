@@ -612,7 +612,7 @@ dependencies = [
 [[package]]
 name = "blockbuster"
 version = "0.7.3"
-source = "git+https://github.com/muhitrhn/blockbuster.git?rev=ef3d9673#ef3d9673250aca67bc0767303e617c880e98ef3d"
+source = "git+https://github.com/muhitrhn/blockbuster.git?rev=1d43d57c#1d43d57c0d34dc95e128146de06d09e4310c16c1"
 dependencies = [
  "anchor-lang",
  "async-trait",
@@ -2671,7 +2671,7 @@ dependencies = [
  "anchor-lang",
  "async-trait",
  "base64 0.21.0",
- "blockbuster 0.7.3 (git+https://github.com/muhitrhn/blockbuster.git?rev=ef3d9673)",
+ "blockbuster 0.7.3 (git+https://github.com/muhitrhn/blockbuster.git?rev=1d43d57c)",
  "borsh 0.9.3",
  "bs58 0.4.0",
  "cadence",
