@@ -14,25 +14,23 @@ impl EntityName for Entity {
 
 #[derive(Clone, Debug, PartialEq, DeriveModel, DeriveActiveModel, Serialize, Deserialize)]
 pub struct Model {
-    pub pubkey: Vec<u8>,
-    pub authority: Vec<u8>,
     pub token: Vec<u8>,
+    pub authority: Vec<u8>,
     pub slot_updated: i64,
-    pub custom_program: Vec<u8>,
+    pub owner_program: Vec<u8>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
 pub enum Column {
-    Pubkey,
-    Authority,
     Token,
+    Authority,
     SlotUpdated,
-    CustomProgram,
+    OwnerProgram,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DerivePrimaryKey)]
 pub enum PrimaryKey {
-    Pubkey,
+    Token,
 }
 
 impl PrimaryKeyTrait for PrimaryKey {
@@ -49,11 +47,10 @@ impl ColumnTrait for Column {
     type EntityName = Entity;
     fn def(&self) -> ColumnDef {
         match self {
-            Self::Pubkey => ColumnType::Binary.def(),
-            Self::Authority => ColumnType::Binary.def(),
             Self::Token => ColumnType::Binary.def(),
+            Self::Authority => ColumnType::Binary.def(),
             Self::SlotUpdated => ColumnType::BigInteger.def(),
-            Self::CustomProgram => ColumnType::Binary.def(),
+            Self::OwnerProgram => ColumnType::Binary.def(),
         }
     }
 }

@@ -35,7 +35,6 @@ pub async fn handle_token_program_account<'a, 'b, 'c>(
 
             if !ta.owner.is_on_curve() {
                 let stake_account: Option<stake_accounts::Model> = stake_accounts::Entity::find_by_id(mint.clone())
-                    .filter(stake_accounts::Column::Pubkey.eq(owner.clone()))
                     .one(db)
                     .await?;
 

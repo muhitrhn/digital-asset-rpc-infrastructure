@@ -14,29 +14,26 @@ pub async fn handle_stake_program_account<'a, 'b, 'c>(
     db: &'c DatabaseConnection,
     _task_manager: &UnboundedSender<TaskData>,
 ) -> Result<(), IngesterError> {
-    let key = *account_update.pubkey().unwrap();
-    let key_bytes = key.0.to_vec();
-    let custom_program = account_update.owner().unwrap().0.to_vec();
+    let owner_program = account_update.owner().unwrap().0.to_vec();
 
     match &parsing_result {
         StakeProgramAccount::SacStakeAccount(sa) => {
             let authority = sa.authority.to_bytes().to_vec();
             let token = sa.token.to_bytes().to_vec();
             let model = stake_accounts::ActiveModel {
-                pubkey: Set(key_bytes),
-                authority: Set(authority.clone()),
                 token: Set(token.clone()),
-                custom_program: Set(custom_program),
+                authority: Set(authority.clone()),
+                owner_program: Set(owner_program),
                 slot_updated: Set(account_update.slot() as i64)
             };
 
             let mut query = stake_accounts::Entity::insert(model)
                 .on_conflict(
-                    OnConflict::columns([stake_accounts::Column::Pubkey])
+                    OnConflict::columns([stake_accounts::Column::Token])
                         .update_columns([
-                            stake_accounts::Column::Authority,
                             stake_accounts::Column::Token,
-                            stake_accounts::Column::CustomProgram,
+                            stake_accounts::Column::Authority,
+                            stake_accounts::Column::OwnerProgram,
                             stake_accounts::Column::SlotUpdated,
                         ])
                         .to_owned(),
@@ -53,10 +50,10 @@ pub async fn handle_stake_program_account<'a, 'b, 'c>(
                 .one(&txn)
                 .await?;
             if let Some(asset) = asset_update {
-                    let mut active: asset::ActiveModel = asset.into();
+                let mut active: asset::ActiveModel = asset.into();
                 active.owner = Set(Some(authority));
-                        active.save(&txn).await?;
-                    }
+                active.save(&txn).await?;
+            }
             txn.commit().await?;
             Ok(())
         }

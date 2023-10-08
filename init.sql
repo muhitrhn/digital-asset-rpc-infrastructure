@@ -160,11 +160,10 @@ create index ta_amount_del on token_accounts USING BTREE (delegated_amount);
 
 create table stake_accounts
 (
-    pubkey                     bytea  PRIMARY KEY,
+    token                      bytea  PRIMARY KEY,
     authority                  bytea  not null ,
-    token                      bytea  not null,
     slot_updated               bigint not null,
-    custom_program             bytea  not null
+    owner_program              bytea  not null
 );
 -- @@@@@@
 create index sa_token on stake_accounts (token);
